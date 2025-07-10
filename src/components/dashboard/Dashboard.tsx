@@ -14,7 +14,17 @@ import {
   TrendingDown
 } from 'lucide-react';
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  navigationItems?: any[];
+  activeSection?: string;
+  onSectionChange?: (section: string) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({
+  navigationItems,
+  activeSection,
+  onSectionChange
+}) => {
   const { designSystem } = useDesignSystem();
 
   const statsData = [
@@ -79,7 +89,13 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <AdminLayout title="Dashboard" subtitle="Welcome to your admin dashboard">
+    <AdminLayout 
+      title="Dashboard" 
+      subtitle="Welcome to your admin dashboard"
+      navigationItems={navigationItems}
+      activeSection={activeSection}
+      onSectionChange={onSectionChange}
+    >
       <div className="space-y-8">
         {/* Welcome Section */}
         <div 

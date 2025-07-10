@@ -3,7 +3,7 @@ import { LucideIcon } from 'lucide-react';
 export interface NavigationItem {
   id: string;
   name: string;
-  icon: LucideIcon;
+  icon: LucideIcon | string;
   color: string;
   href?: string;
   children?: NavigationItem[];
@@ -25,6 +25,12 @@ export const defaultNavigationItems: NavigationItem[] = [
     name: 'Dashboard',
     icon: 'LayoutDashboard' as any,
     color: 'text-blue-600',
+  },
+  {
+    id: 'phone',
+    name: 'Phone Manager',
+    icon: 'Phone' as any,
+    color: 'text-purple-600',
   },
   {
     id: 'users',

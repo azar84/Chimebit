@@ -13,7 +13,17 @@ interface TwilioCredentials {
   apiKey: string;
 }
 
-export const PhoneManager: React.FC = () => {
+interface PhoneManagerProps {
+  navigationItems?: any[];
+  activeSection?: string;
+  onSectionChange?: (section: string) => void;
+}
+
+export const PhoneManager: React.FC<PhoneManagerProps> = ({
+  navigationItems,
+  activeSection,
+  onSectionChange
+}) => {
   const [credentials, setCredentials] = useState<TwilioCredentials>({
     accountSid: '',
     accessToken: '',
@@ -56,6 +66,9 @@ export const PhoneManager: React.FC = () => {
     <AdminLayout 
       title="Phone Manager" 
       subtitle="Manage phone calls and Twilio settings"
+      navigationItems={navigationItems}
+      activeSection={activeSection}
+      onSectionChange={onSectionChange}
     >
       <div className="space-y-6">
         {/* Header Actions */}
