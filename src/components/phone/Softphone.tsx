@@ -3,6 +3,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Badge } from '../ui/Badge';
+import { Dialpad } from './Dialpad';
 import { 
   Phone, 
   PhoneOff, 
@@ -240,7 +241,7 @@ export const Softphone: React.FC<SoftphoneProps> = ({
   };
 
   return (
-    <Card title="Softphone" className="w-full max-w-md">
+    <Card title="Softphone" className="w-full max-w-lg">
       <div className="space-y-6">
         {/* Status Display */}
         <div className="text-center">
@@ -276,31 +277,33 @@ export const Softphone: React.FC<SoftphoneProps> = ({
           />
         </div>
 
-        {/* Call Controls */}
-        <div className="flex justify-center space-x-4">
-          {!callState.isConnected ? (
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleMakeCall}
+        {/* Dialpad */}
+        {!callState.isConnected && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Dialpad
+            </label>
+            <Dialpad
+              onNumberPress={(number) => {
+                if (number === '+') {
+                  setCallState(prev => ({ ...prev, phoneNumber: prev.phoneNumber + '+' }));
+                } else {
+                  setCallState(prev => ({ ...prev, phoneNumber: prev.phoneNumber + number }));
+                }
+              }}
+              onDelete={() => {
+                setCallState(prev => ({ 
+                  ...prev, 
+                  phoneNumber: prev.phoneNumber.slice(0, -1) 
+                }));
+              }}
+              onCall={handleMakeCall}
               disabled={!isInitialized || !callState.phoneNumber.trim()}
-              leftIcon={<PhoneCall className="w-5 h-5" />}
-            >
-              Call
-            </Button>
-          ) : (
-            <Button
-              variant="destructive"
-              size="lg"
-              onClick={handleEndCall}
-              leftIcon={<PhoneOff className="w-5 h-5" />}
-            >
-              End Call
-            </Button>
-          )}
-        </div>
+            />
+          </div>
+        )}
 
-        {/* Incoming Call Controls */}
+        {/* Call Controls (for incoming calls) */}
         {callState.callStatus === 'connecting' && !callState.isConnected && (
           <div className="flex justify-center space-x-4">
             <Button
@@ -324,23 +327,35 @@ export const Softphone: React.FC<SoftphoneProps> = ({
 
         {/* Call Controls (when connected) */}
         {callState.isConnected && (
-          <div className="flex justify-center space-x-4">
-            <Button
-              variant={callState.isMuted ? "destructive" : "outline"}
-              size="sm"
-              onClick={handleMuteToggle}
-              leftIcon={callState.isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            >
-              {callState.isMuted ? 'Unmute' : 'Mute'}
-            </Button>
-            <Button
-              variant={callState.isSpeakerOn ? "primary" : "outline"}
-              size="sm"
-              onClick={handleSpeakerToggle}
-              leftIcon={callState.isSpeakerOn ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            >
-              {callState.isSpeakerOn ? 'Speaker Off' : 'Speaker On'}
-            </Button>
+          <div className="space-y-4">
+            <div className="flex justify-center space-x-4">
+              <Button
+                variant="destructive"
+                size="lg"
+                onClick={handleEndCall}
+                leftIcon={<PhoneOff className="w-5 h-5" />}
+              >
+                End Call
+              </Button>
+            </div>
+            <div className="flex justify-center space-x-4">
+              <Button
+                variant={callState.isMuted ? "destructive" : "outline"}
+                size="sm"
+                onClick={handleMuteToggle}
+                leftIcon={callState.isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              >
+                {callState.isMuted ? 'Unmute' : 'Mute'}
+              </Button>
+              <Button
+                variant={callState.isSpeakerOn ? "primary" : "outline"}
+                size="sm"
+                onClick={handleSpeakerToggle}
+                leftIcon={callState.isSpeakerOn ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              >
+                {callState.isSpeakerOn ? 'Speaker Off' : 'Speaker On'}
+              </Button>
+            </div>
           </div>
         )}
 

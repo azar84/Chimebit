@@ -4,8 +4,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Softphone } from './Softphone';
-import { TwilioSettings } from './TwilioSettings';
-import { Phone, Settings, History, Users } from 'lucide-react';
+import { Phone, History, Users, Settings } from 'lucide-react';
 
 interface TwilioCredentials {
   accountSid: string;
@@ -29,8 +28,6 @@ export const PhoneManager: React.FC<PhoneManagerProps> = ({
     accessToken: '',
     apiKey: ''
   });
-
-  const [showSettings, setShowSettings] = useState(false);
   const [callHistory, setCallHistory] = useState<Array<{
     id: string;
     callSid: string;
@@ -43,7 +40,6 @@ export const PhoneManager: React.FC<PhoneManagerProps> = ({
 
   const handleSaveCredentials = (newCredentials: TwilioCredentials) => {
     setCredentials(newCredentials);
-    setShowSettings(false);
   };
 
   const handleCallStart = (callSid: string) => {
@@ -77,32 +73,23 @@ export const PhoneManager: React.FC<PhoneManagerProps> = ({
             <Badge variant={isConfigured ? 'success' : 'warning'}>
               {isConfigured ? 'Configured' : 'Not Configured'}
             </Badge>
+            <span className="text-sm text-gray-600">
+              {isConfigured ? 'Twilio is properly configured' : 'Configure Twilio in Settings'}
+            </span>
           </div>
           <Button
             variant="outline"
-            onClick={() => setShowSettings(!showSettings)}
             leftIcon={<Settings className="w-4 h-4" />}
+            onClick={() => onSectionChange?.('settings')}
           >
-            {showSettings ? 'Hide Settings' : 'Twilio Settings'}
+            Go to Settings
           </Button>
         </div>
 
-        {/* Settings Panel */}
-        {showSettings && (
-          <div className="flex justify-center">
-            <TwilioSettings
-              accountSid={credentials.accountSid}
-              accessToken={credentials.accessToken}
-              apiKey={credentials.apiKey}
-              onSave={handleSaveCredentials}
-            />
-          </div>
-        )}
-
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Softphone */}
-          <div className="lg:col-span-1">
+          <div className="xl:col-span-1">
             <div className="flex justify-center">
               <Softphone
                 accountSid={credentials.accountSid}
@@ -116,7 +103,7 @@ export const PhoneManager: React.FC<PhoneManagerProps> = ({
           </div>
 
           {/* Call History & Stats */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="xl:col-span-2 space-y-6">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="p-4">

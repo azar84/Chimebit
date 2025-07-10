@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { PhoneManager } from './components/phone/PhoneManager';
+import { SettingsManager } from './components/settings/SettingsManager';
 import { UsersPage } from '../examples/pages/UsersPage';
 import { defaultNavigationItems } from './types/navigation';
 import { LayoutDashboard, Phone, Users, BarChart3, Settings } from 'lucide-react';
@@ -57,19 +58,11 @@ export const App: React.FC = () => {
         );
       case 'settings':
         return (
-          <AdminLayout 
-            title="Settings" 
-            subtitle="Manage your application settings"
+          <SettingsManager
             navigationItems={navigationItems}
             activeSection={activeSection}
             onSectionChange={setActiveSection}
-          >
-            <div className="text-center py-12">
-              <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Settings</h2>
-              <p className="text-gray-600">Settings panel coming soon...</p>
-            </div>
-          </AdminLayout>
+          />
         );
       default:
         return <Dashboard />;
