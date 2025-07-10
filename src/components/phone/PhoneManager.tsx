@@ -12,22 +12,30 @@ interface TwilioCredentials {
   apiKey: string;
 }
 
+interface TwilioCredentials {
+  accountSid: string;
+  accessToken: string;
+  apiKey: string;
+}
+
 interface PhoneManagerProps {
   navigationItems?: any[];
   activeSection?: string;
   onSectionChange?: (section: string) => void;
+  twilioCredentials?: TwilioCredentials;
 }
 
 export const PhoneManager: React.FC<PhoneManagerProps> = ({
   navigationItems,
   activeSection,
-  onSectionChange
+  onSectionChange,
+  twilioCredentials
 }) => {
-  const [credentials, setCredentials] = useState<TwilioCredentials>({
+  const credentials = twilioCredentials || {
     accountSid: '',
     accessToken: '',
     apiKey: ''
-  });
+  };
   const [callHistory, setCallHistory] = useState<Array<{
     id: string;
     callSid: string;
@@ -39,7 +47,8 @@ export const PhoneManager: React.FC<PhoneManagerProps> = ({
   }>>([]);
 
   const handleSaveCredentials = (newCredentials: TwilioCredentials) => {
-    setCredentials(newCredentials);
+    // This is now handled at the app level
+    console.log('Credentials would be saved:', newCredentials);
   };
 
   const handleCallStart = (callSid: string) => {

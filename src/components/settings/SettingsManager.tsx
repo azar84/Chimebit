@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '../layout/AdminLayout';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -22,23 +22,35 @@ interface SettingsTab {
   description: string;
 }
 
+interface TwilioCredentials {
+  accountSid: string;
+  accessToken: string;
+  apiKey: string;
+}
+
 interface SettingsManagerProps {
   navigationItems?: any[];
   activeSection?: string;
   onSectionChange?: (section: string) => void;
+  twilioCredentials?: TwilioCredentials;
+  onSaveTwilioCredentials?: (credentials: TwilioCredentials) => void;
 }
 
 export const SettingsManager: React.FC<SettingsManagerProps> = ({
   navigationItems,
   activeSection,
-  onSectionChange
+  onSectionChange,
+  twilioCredentials,
+  onSaveTwilioCredentials
 }) => {
   const [activeTab, setActiveTab] = useState('general');
-  const [twilioCredentials, setTwilioCredentials] = useState({
-    accountSid: '',
-    accessToken: '',
-    apiKey: ''
-  });
+  const [localTwilioCredentials, setLocalTwilioCredentials] = useState(
+    twilioCredentials || {
+      accountSid: '',
+      accessToken: '',
+      apiKey: ''
+    }
+  );
 
   const settingsTabs: SettingsTab[] = [
     {
@@ -91,8 +103,16 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
     }
   ];
 
-  const handleSaveTwilioCredentials = (credentials: any) => {
-    setTwilioCredentials(credentials);
+  // Update local credentials when props change
+  useEffect(() => {
+    if (twilioCredentials) {
+      setLocalTwilioCredentials(twilioCredentials);
+    }
+  }, [twilioCredentials]);
+
+  const handleSaveTwilioCredentials = (credentials: TwilioCredentials) => {
+    setLocalTwilioCredentials(credentials);
+    onSaveTwilioCredentials?.(credentials);
   };
 
   const renderTabContent = () => {
@@ -107,9 +127,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
               </p>
             </div>
             <TwilioSettings
-              accountSid={twilioCredentials.accountSid}
-              accessToken={twilioCredentials.accessToken}
-              apiKey={twilioCredentials.apiKey}
+              accountSid={localTwilioCredentials.accountSid}
+              accessToken={localTwilioCredentials.accessToken}
+              apiKey={localTwilioCredentials.apiKey}
               onSave={handleSaveTwilioCredentials}
             />
           </div>

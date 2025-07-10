@@ -16,13 +16,43 @@ const iconMap = {
   Settings,
 };
 
+interface TwilioCredentials {
+  accountSid: string;
+  accessToken: string;
+  apiKey: string;
+}
+
 export const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [twilioCredentials, setTwilioCredentials] = useState<TwilioCredentials>({
+    accountSid: '',
+    accessToken: '',
+    apiKey: ''
+  });
 
   const navigationItems = defaultNavigationItems.map(item => ({
     ...item,
     icon: iconMap[item.icon as keyof typeof iconMap] || LayoutDashboard
   }));
+
+  const handleSaveTwilioCredentials = (credentials: TwilioCredentials) => {
+    setTwilioCredentials(credentials);
+    // In a real app, you'd also save to localStorage or backend
+    localStorage.setItem('twilioCredentials', JSON.stringify(credentials));
+  };
+
+  // Load credentials from localStorage on app start
+  React.useEffect(() => {
+    const savedCredentials = localStorage.getItem('twilioCredentials');
+    if (savedCredentials) {
+      try {
+        const parsed = JSON.parse(savedCredentials);
+        setTwilioCredentials(parsed);
+      } catch (error) {
+        console.error('Failed to parse saved Twilio credentials:', error);
+      }
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -37,6 +67,7 @@ export const App: React.FC = () => {
           navigationItems={navigationItems}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
+          twilioCredentials={twilioCredentials}
         />;
       case 'users':
         return <UsersPage />;
@@ -62,6 +93,8 @@ export const App: React.FC = () => {
             navigationItems={navigationItems}
             activeSection={activeSection}
             onSectionChange={setActiveSection}
+            twilioCredentials={twilioCredentials}
+            onSaveTwilioCredentials={handleSaveTwilioCredentials}
           />
         );
       default:
